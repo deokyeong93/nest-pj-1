@@ -1,0 +1,9 @@
+{
+  "name": "nest-pj-1",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev:front" : "cd ./frontend && npm run dev",
+    "dev:back" : "cd ./backend && npm run start:dev"
+  }
+}
