@@ -7,9 +7,9 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { Controller, Get, Post, Put } from '@nestjs/common';
-import { HttpExceptionFilter } from 'src/common/exceptions/http-exception.filter';
-import { SuccessInterceptor } from 'src/common/interceptors/success.interceptor';
-import { PositiveIntPipe } from 'src/common/pipes/positiveInt.pipe';
+import { HttpExceptionFilter } from '../common/exceptions/http-exception.filter';
+import { SuccessInterceptor } from '../common/interceptors/success.interceptor';
+import { PositiveIntPipe } from '../common/pipes/positiveInt.pipe';
 import { CatsService } from './cats.service';
 
 @Controller('cats')
