@@ -1,10 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
+import { CatsRepository } from 'src /cats/cats.repository';
+import { Payload } from './jwt.payload';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor() {
+  constructor(private readonly catsRepository: CatsRepository) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: 'secret', // 절대 유출되면 안 되기에 나중에 환경 변수
@@ -12,5 +14,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  // async validate(payload) {}
+  async validate(payload: Payload) {
+    const cat = await this.catsRepository.findCatByIdWithoutPassword(
+      payload.sub,
+    );
+
+    if (cat) {
+      return cat;
+    } else {
+      throw new HttpException('인증되지 않은 고양이', 404);
+    }
+  }
 }

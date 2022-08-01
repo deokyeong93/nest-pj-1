@@ -1,8 +1,16 @@
-import { Body, UseFilters, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  Req,
+  UseFilters,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { Controller, Get, Post } from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { AuthService } from 'src /auth/auth.service';
-import { LoginRequestDto } from 'src /auth/dto/login.request.dto';
+import { CurrentUser } from 'src /common/decorators/user.decorator';
+import { AuthService } from '../auth/auth.service';
+import { LoginRequestDto } from '../auth/dto/login.request.dto';
+import { JwtAuthGuard } from '../auth/jwt/jwt.guard';
 import { HttpExceptionFilter } from '../common/exceptions/http-exception.filter';
 import { SuccessInterceptor } from '../common/interceptors/success.interceptor';
 import { CatsService } from './cats.service';
@@ -18,9 +26,10 @@ export class CatsController {
     private readonly authService: AuthService,
   ) {}
   @ApiOperation({ summary: '조회' })
+  @UseGuards(JwtAuthGuard)
   @Get()
-  getCurrentCat() {
-    return 'current cat';
+  getCurrentCat(@CurrentUser() cat) {
+    return cat.readOnlyData;
   }
 
   @ApiResponse({
@@ -42,12 +51,6 @@ export class CatsController {
   @Post('login')
   logIn(@Body() data: LoginRequestDto) {
     return this.authService.jwtLogIn(data);
-  }
-
-  @ApiOperation({ summary: '로그아웃' })
-  @Post('logout')
-  logout() {
-    return 'logout';
   }
 
   @ApiOperation({ summary: '업로드' })
