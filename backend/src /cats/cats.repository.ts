@@ -8,6 +8,11 @@ import { CatRequestDto } from './dto/cats.request.dto';
 export class CatsRepository {
   constructor(@InjectModel(Cat.name) private readonly catModel: Model<Cat>) {}
 
+  async findAll() {
+    const cats = await this.catModel.find();
+    return cats;
+  }
+
   async findByIdAndUpdateImg(id: string, fileName: string) {
     const cat = await this.catModel.findById(id);
 
